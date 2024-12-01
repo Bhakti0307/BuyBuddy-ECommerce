@@ -73,7 +73,7 @@ const storage = multer.diskStorage({
    var wId=count+1;
     console.log(count);
     var obj={
-            "EthnicId":wId,
+           "EthnicId":wId,
              "EthnicName":req.body.txtName,
              "EthnicPrice":req.body.txtPrice,
              "EthnicDescription":req.body.txtDesc,
