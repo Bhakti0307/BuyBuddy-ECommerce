@@ -158,7 +158,33 @@ router.put("/updateWomanEthnic/:id",async function(req,res){
     
 })
 
+
+
 // Mens
+router.use(express.static('public'));
+// //Serves all the request which includes /images in the url from Images folder
+router.use('/images', express.static(__dirname + '/images'));
+
+
+//Set up multer to handle file uploads
+const menstorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, './public/images/men'); // Destination folder for uploaded files
+    },
+    filename: (req, file, cb) => {
+      const fileName = `${file.originalname}`;
+      cb(null, fileName);
+    }
+  });
+  //const upload = multer({ storage: storage });
+ 
+  router.get("/home",function(req,res){
+    res.send("home page!!");
+  })
+
+
+
+
 router.post('/menEthnic/upload', upload.single('image1'), async (req, res) => {
   // Access the uploaded file through req.file
   if (!req.file) {
@@ -257,6 +283,26 @@ router.put("/updateMenEthnic/:id",async function(req,res){
 
 
 //Kid
+
+router.use(express.static('public'));
+// //Serves all the request which includes /images in the url from Images folder
+router.use('/images', express.static(__dirname + '/images'));
+
+
+//Set up multer to handle file uploads
+const kidstorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, './public/images/kid'); // Destination folder for uploaded files
+    },
+    filename: (req, file, cb) => {
+      const fileName = `${file.originalname}`;
+      cb(null, fileName);
+    }
+  });
+
+
+
+
 router.post('/kidEthnic/upload', upload.single('image2'), async (req, res) => {
   // Access the uploaded file through req.file
   if (!req.file) {
@@ -264,11 +310,11 @@ router.post('/kidEthnic/upload', upload.single('image2'), async (req, res) => {
   }
   let url="http://localhost:3000/Mesho/images/"+req.file.originalname;
   //insert into database
-  var count=await User1.find().countDocuments();
+  var count=await User2.find().countDocuments();
  var kidId=count+1;
   console.log(count);
   var obj={
-          "menId":kidId,
+          "kidId":kidId,
            "kidName":req.body.txtName2,
            "kidPrice":req.body.txtPrice2,
            "kidDescription":req.body.txtDesc2,
@@ -342,7 +388,7 @@ router.put("/updateKidEthnic/:id",async function(req,res){
 // delete record
       router.delete("/deleteKidEthic/:id",async function(req,res){
       var id=req.params.id;
-      var result=await User2.findOneAndDelete({KidId:id});
+      var result=await User2.findOneAndDelete({kidId:id});
       if(result){
       res.json({"msg":"record is deleted"});
        }
