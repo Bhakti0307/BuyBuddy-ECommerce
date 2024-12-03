@@ -161,26 +161,7 @@ router.put("/updateWomanEthnic/:id",async function(req,res){
 
 
 // Mens
-router.use(express.static('public'));
-// //Serves all the request which includes /images in the url from Images folder
-router.use('/images', express.static(__dirname + '/images'));
 
-
-//Set up multer to handle file uploads
-const menstorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, './public/images/men'); // Destination folder for uploaded files
-    },
-    filename: (req, file, cb) => {
-      const fileName = `${file.originalname}`;
-      cb(null, fileName);
-    }
-  });
-  //const upload = multer({ storage: storage });
- 
-  router.get("/home",function(req,res){
-    res.send("home page!!");
-  })
 
 
 
@@ -284,21 +265,6 @@ router.put("/updateMenEthnic/:id",async function(req,res){
 
 //Kid
 
-router.use(express.static('public'));
-// //Serves all the request which includes /images in the url from Images folder
-router.use('/images', express.static(__dirname + '/images'));
-
-
-//Set up multer to handle file uploads
-const kidstorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, './public/images/kid'); // Destination folder for uploaded files
-    },
-    filename: (req, file, cb) => {
-      const fileName = `${file.originalname}`;
-      cb(null, fileName);
-    }
-  });
 
 
 
