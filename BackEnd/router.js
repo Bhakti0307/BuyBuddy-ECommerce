@@ -366,13 +366,27 @@ router.put("/updateKidEthnic/:id",async function(req,res){
 })
 
 //signUp
-router.post("/signup",async function (req,res) {
-  var obj=req.body;
-  console.log(obj);
-  var result=await Cust.insertMany(obj);
-  console.log(result);
-  res.json(result);
-})
+router.post("/signup", async function (req, res) {
+ 
+    var id=0;
+    var obj=req.body;
+    const count = await Cust.countDocuments();
+    
+     if(count==0){
+        id=1;
+    }
+    else{
+        id=count+1;
+    }
+    // Prepare the object for insertion
+    
+    obj.CustId=id;
+    var result=await Cust.insertMany(obj);
+    console.log(result);
+    res.json(result);
+  
+});
+
 // getAllSignUser
 router.get("/signupAllUser",async function (req,res) {
   var result=await Cust.find({},{id:0,_v:0});
@@ -381,7 +395,7 @@ router.get("/signupAllUser",async function (req,res) {
 // delete record
 router.delete("/deleteSignUser/:id",async function(req,res){
   var id=req.params.id;
-  var result=await Cust.findOneAndDelete({custId:id});
+  var result=await Cust.findOneAndDelete({CustId:id});
   if(result){
   res.json({"msg":"record is deleted"});
    }
@@ -390,41 +404,60 @@ router.delete("/deleteSignUser/:id",async function(req,res){
       res.json({"msg":"record not deleted"});
    }
 
-})
+});
 // Signin
+
 
 router.post("/login", async function (req, res) {
   try {
-    const { CustEmail, CustPass } = req.body;
+      const { CustEmail, CustPass } = req.body;
 
-    console.log("Received CustEmail:", CustEmail);
-    console.log("Received CustPass:", CustPass);
+      console.log("Received login request:", { CustEmail });
 
-    if (!CustEmail || !CustPass) {
-      return res.status(400).json({ message: "Email and password are required" });
-    }
+      if (!CustEmail || !CustPass) {
+          return res.status(400).json({
+              success: false,
+              message: "Email and password are required",
+          });
+      }
 
-    console.log("Querying database with:", { CustEmail, CustPass });
-    const result = await Cust.findOne({ CustEmail, CustPass });
+      // Fetch the user from the database by email
+      const result = await Cust.findOne({ CustEmail });
 
-    console.log("Query result:", result);
+      if (!result) {
+          return res.status(400).json({
+              success: false,
+              message: "Invalid email or password",
+          });
+      }
 
-    if (!result) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
+      // Compare the passwords directly
+      if (result.CustPass !== CustPass) {
+          return res.status(400).json({
+              success: false,
+              message: "Invalid email or password",
+          });
+      }
 
-    // Successful login
-    return res.status(200).json({
-      message: "User login successful",
-      result: {
-        CustEmail: result.CustEmail,
-      },
-    });
+      // Successful login
+      return res.status(200).json({
+          success: true,
+          message: "User login successful",
+          result: {
+              CustEmail: result.CustEmail,
+          },
+      });
   } catch (error) {
-    console.error("Error during login:", error);
-    return res.status(500).json({ message: "An error occurred. Please try again later." });
+      console.error("Error during login:", error);
+      return res.status(500).json({
+          success: false,
+          message: "An error occurred. Please try again later.",
+      });
   }
 });
+
+
+
 
 // Pagination
 router.get("/getMenEthnic/:lt/:sk",async function(req,res){
