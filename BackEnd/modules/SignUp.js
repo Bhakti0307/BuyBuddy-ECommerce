@@ -11,6 +11,7 @@ let Customer= new mongoose.Schema({
     CustEmail:{
         type:String,
         required:true,
+        unique: true
     },
     CustPass:{
         type:String,
